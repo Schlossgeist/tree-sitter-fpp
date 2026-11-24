@@ -1,0 +1,52 @@
+==================
+Fiasco tag operators and precedence
+==================
+
+INTERFACE [a || b && !c]:
+IMPLEMENTATION [(a || b) && c]:
+INTERFACE [a,b-c]:
+IMPLEMENTATION [a & b | c - d, e]:
+INTERFACE [{a,b}-(c||d)]:
+
+---
+
+(translation_unit
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression (identifier))
+      (fiasco_tag_expression
+        (fiasco_tag_expression (identifier))
+        (fiasco_tag_expression (fiasco_tag_expression (identifier))))))
+  (fiasco_implementation_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression (identifier))
+          (fiasco_tag_expression (identifier))))
+      (fiasco_tag_expression (identifier))))
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression (identifier))
+      (fiasco_tag_expression
+        (fiasco_tag_expression (identifier))
+        (fiasco_tag_expression (identifier)))))
+  (fiasco_implementation_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (fiasco_tag_expression (identifier))
+            (fiasco_tag_expression (identifier)))
+          (fiasco_tag_expression (identifier)))
+        (fiasco_tag_expression (identifier)))
+      (fiasco_tag_expression (identifier))))
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression (identifier))
+          (fiasco_tag_expression (identifier))))
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression (identifier))
+          (fiasco_tag_expression (identifier)))))))

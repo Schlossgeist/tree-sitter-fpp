@@ -1,0 +1,517 @@
+==================
+Fiasco sections
+==================
+
+INTERFACE [x86,{arm,riscv}-!debug]:
+class Counter {};
+IMPLEMENTATION:
+PUBLIC int Counter::get() { return 1; }
+
+---
+
+(translation_unit
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (identifier))
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (fiasco_tag_expression
+              (identifier))
+            (fiasco_tag_expression
+              (identifier))))
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (identifier))))))
+  (class_specifier
+    (type_identifier)
+    (field_declaration_list))
+  (fiasco_implementation_section)
+  (function_definition
+    (fiasco_visibility_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (return_statement
+        (number_literal)))))
+
+==================
+Extensions and dependencies
+==================
+
+INTERFACE:
+EXTENSION class Counter : Base { int value; };
+IMPLEMENTATION [platform]:
+IMPLEMENT_DEFAULT inline NEEDS["counter.h", Counter::value] int Counter::get() { return value; }
+IMPLEMENT_OVERRIDE inline NOEXPORT int Counter::get() { return 0; }
+PRIVATE inline ALWAYS_INLINE void Counter::reset() {}
+
+---
+
+(translation_unit
+  (fiasco_interface_section)
+  (fiasco_extension
+    (class_specifier
+      (type_identifier)
+      (base_class_clause
+        (type_identifier))
+      (field_declaration_list
+        (field_declaration
+          (primitive_type)
+          (field_identifier)))))
+  (fiasco_implementation_section
+    (fiasco_tag_expression
+      (identifier)))
+  (function_definition
+    (fiasco_implement_specifier)
+    (storage_class_specifier)
+    (fiasco_needs
+      (string_literal
+        (string_content))
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier)))
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (return_statement
+        (identifier))))
+  (function_definition
+    (fiasco_implement_specifier)
+    (storage_class_specifier)
+    (fiasco_inline_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (return_statement
+        (number_literal))))
+  (function_definition
+    (fiasco_visibility_specifier)
+    (storage_class_specifier)
+    (fiasco_inline_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement)))
+
+==================
+Constructors, conditional tags, and C preprocessor
+==================
+
+INTERFACE [!debug,arm-x86]:
+struct Foo { Foo(); ~Foo(); };
+#if defined(CONFIG_FOO)
+IMPLEMENTATION [{arm,x86}-!debug]:
+PROTECTED Foo::Foo() {}
+PUBLIC Foo::~Foo() {}
+IMPLEMENT int Foo::enabled() { return TAG_ENABLED(arm || x86); }
+#endif
+
+---
+
+(translation_unit
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (identifier)))
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (identifier))
+        (fiasco_tag_expression
+          (identifier)))))
+  (struct_specifier
+    (type_identifier)
+    (field_declaration_list
+      (declaration
+        (function_declarator
+          (identifier)
+          (parameter_list)))
+      (declaration
+        (function_declarator
+          (destructor_name
+            (identifier))
+          (parameter_list)))))
+  (preproc_if
+    (preproc_defined
+      (identifier))
+    (fiasco_implementation_section
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (fiasco_tag_expression
+              (identifier))
+            (fiasco_tag_expression
+              (identifier))))
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (identifier)))))
+    (function_definition
+      (fiasco_visibility_specifier)
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list))
+      (compound_statement))
+    (function_definition
+      (fiasco_visibility_specifier)
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (destructor_name
+            (identifier)))
+        (parameter_list))
+      (compound_statement))
+    (function_definition
+      (fiasco_implement_specifier)
+      (primitive_type)
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list))
+      (compound_statement
+        (return_statement
+          (call_expression
+            (identifier)
+            (argument_list
+              (binary_expression
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Member modifiers before template headers
+================================================================================
+
+IMPLEMENTATION:
+
+PUBLIC inline
+template<class T>
+Stack<T>::Stack()
+{}
+
+IMPLEMENT template<typename T> template<typename R>
+R *Outer<T>::Inner::get() const
+{ return nullptr; }
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (fiasco_implementation_section)
+  (template_declaration
+    (fiasco_visibility_specifier)
+    (storage_class_specifier)
+    (template_parameter_list
+      (type_parameter_declaration
+        (type_identifier)))
+    (function_definition
+      (function_declarator
+        (qualified_identifier
+          (template_type
+            (type_identifier)
+            (template_argument_list
+              (type_descriptor
+                (type_identifier))))
+          (identifier))
+        (parameter_list))
+      (compound_statement)))
+  (template_declaration
+    (fiasco_implement_specifier)
+    (template_parameter_list
+      (type_parameter_declaration
+        (type_identifier)))
+    (template_declaration
+      (template_parameter_list
+        (type_parameter_declaration
+          (type_identifier)))
+      (function_definition
+        (type_identifier)
+        (pointer_declarator
+          (function_declarator
+            (qualified_identifier
+              (template_type
+                (type_identifier)
+                (template_argument_list
+                  (type_descriptor
+                    (type_identifier))))
+              (qualified_identifier
+                (namespace_identifier)
+                (identifier)))
+            (parameter_list)
+            (type_qualifier)))
+        (compound_statement
+          (return_statement
+            (null)))))))
+
+================================================================================
+Functional cast with a sized type keyword
+================================================================================
+
+void f()
+{
+  if (unsigned (m->depth) <= d)
+    g(long(x));
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list))
+    (compound_statement
+      (if_statement
+        (condition_clause
+          (binary_expression
+            (call_expression
+              (sized_type_specifier)
+              (argument_list
+                (field_expression
+                  (identifier)
+                  (field_identifier))))
+            (identifier)))
+        (expression_statement
+          (call_expression
+            (identifier)
+            (argument_list
+              (call_expression
+                (sized_type_specifier)
+                (argument_list
+                  (identifier))))))))))
+
+================================================================================
+Section tags starting with digits
+================================================================================
+
+INTERFACE [arm && 32bit]:
+IMPLEMENTATION [{64bit,arm}-!32bit]:
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (identifier))
+      (fiasco_tag_expression
+        (identifier))))
+  (fiasco_implementation_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (identifier))
+          (fiasco_tag_expression
+            (identifier))))
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (identifier))))))
+
+================================================================================
+System headers in NEEDS
+================================================================================
+
+IMPLEMENT inline NEEDS[<cassert>, "foo.h", Foo::bar]
+void Foo::f() {}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (fiasco_implement_specifier)
+    (storage_class_specifier)
+    (fiasco_needs
+      (system_lib_string)
+      (string_literal
+        (string_content))
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier)))
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement)))
+
+================================================================================
+Specifiers before template heads in any order
+================================================================================
+
+inline
+template<typename T> inline
+T f(T t) { return t; }
+
+IMPLEMENT static inline template<typename T>
+void Foo<T>::g() {}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (template_declaration
+    (storage_class_specifier)
+    (template_parameter_list
+      (type_parameter_declaration
+        (type_identifier)))
+    (function_definition
+      (storage_class_specifier)
+      (type_identifier)
+      (function_declarator
+        (identifier)
+        (parameter_list
+          (parameter_declaration
+            (type_identifier)
+            (identifier))))
+      (compound_statement
+        (return_statement
+          (identifier)))))
+  (template_declaration
+    (fiasco_implement_specifier)
+    (storage_class_specifier)
+    (storage_class_specifier)
+    (template_parameter_list
+      (type_parameter_declaration
+        (type_identifier)))
+    (function_definition
+      (primitive_type)
+      (function_declarator
+        (qualified_identifier
+          (template_type
+            (type_identifier)
+            (template_argument_list
+              (type_descriptor
+                (type_identifier))))
+          (identifier))
+        (parameter_list))
+      (compound_statement))))
+
+================================================================================
+FPP keywords before linkage specifications
+================================================================================
+
+IMPLEMENT extern "C" void entry() {}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (linkage_specification
+    (fiasco_implement_specifier)
+    (string_literal
+      (string_content))
+    (function_definition
+      (primitive_type)
+      (function_declarator
+        (identifier)
+        (parameter_list))
+      (compound_statement))))
+
+================================================================================
+String literals concatenated with macros
+================================================================================
+
+const char *s = " " COLOR(green) "cur" END;
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (declaration
+    (type_qualifier)
+    (primitive_type)
+    (init_declarator
+      (pointer_declarator
+        (identifier))
+      (concatenated_string
+        (string_literal
+          (string_content))
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))
+        (string_literal
+          (string_content))
+        (identifier)))))
+
+================================================================================
+Unnamed parameter with default value
+================================================================================
+
+void Context::load(Context * /*old*/ = nullptr) {}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (optional_parameter_declaration
+          (type_identifier)
+          (abstract_pointer_declarator)
+          (comment)
+          (null))))
+    (compound_statement)))
+
+================================================================================
+Anonymous enum with base
+================================================================================
+
+enum : unsigned long { Invalid = 1 };
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (enum_specifier
+    (sized_type_specifier)
+    (enumerator_list
+      (enumerator
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+asm label with attributes and initializer
+================================================================================
+
+KIP kip asm("my_kip") __attribute__((section(".kip"))) = { 1 };
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (declaration
+    (type_identifier)
+    (init_declarator
+      (identifier)
+      (gnu_asm_expression
+        (string_literal
+          (string_content)))
+      (attribute_specifier
+        (argument_list
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal
+                (string_content))))))
+      (initializer_list
+        (number_literal)))))

@@ -1,0 +1,44 @@
+{
+  "grammars": [
+    {
+      "name": "fpp",
+      "camelcase": "FPP",
+      "scope": "source.fpp",
+      "path": ".",
+      "file-types": [
+        "cpp"
+      ],
+      "content-regex": "(?m)^[ \\t]*(INTERFACE|IMPLEMENTATION)\\b",
+      "highlights": [
+        "node_modules/tree-sitter-c/queries/highlights.scm",
+        "node_modules/tree-sitter-cpp/queries/highlights.scm",
+        "queries/highlights.scm"
+      ],
+      "injections": "queries/injections.scm",
+      "tags": "queries/tags.scm",
+      "injection-regex": "^fpp$"
+    }
+  ],
+  "metadata": {
+    "version": "0.23.4",
+    "license": "MIT",
+    "description": "Grammar of Fiasco's Preprocess C++ dialect for tree-sitter",
+    "authors": [
+      {
+        "name": "Nick Naumann",
+        "email": "nick.naumann@mailbox.tu-dresden.de"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/Schlossgeist/tree-sitter-fpp"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}

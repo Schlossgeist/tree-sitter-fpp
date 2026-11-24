@@ -1,0 +1,272 @@
+==================
+Fiasco upstream interface.cpp (https://github.com/kernkonzept/fiasco/tree/012bbb30fa5c95788dd472b956a4620db566450d/tool/preprocess/test)
+==================
+
+INTERFACE [interfacepublic]:
+
+// This is class Foo.
+class Foo
+{
+};
+
+IMPLEMENTATION:
+
+PUBLIC
+void
+Foo::func1()
+{
+
+}
+
+---
+
+(translation_unit
+  (fiasco_interface_section
+    (fiasco_tag_expression
+      (identifier)))
+  (comment)
+  (class_specifier
+    (type_identifier)
+    (field_declaration_list))
+  (fiasco_implementation_section)
+  (function_definition
+    (fiasco_visibility_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement)))
+
+==================
+Fiasco upstream extension_inherit.cpp (012bbb30fa5c95788dd472b956a4620db566450d)
+==================
+
+class Class_b2_e2 : Base_0, Base_1
+{
+};
+
+EXTENSION class Class_b2_e2 : Ext_base_0, Ext_base_1
+{
+};
+
+---
+
+(translation_unit
+  (class_specifier
+    (type_identifier)
+    (base_class_clause
+      (type_identifier)
+      (type_identifier))
+    (field_declaration_list))
+  (fiasco_extension
+    (class_specifier
+      (type_identifier)
+      (base_class_clause
+        (type_identifier)
+        (type_identifier))
+      (field_declaration_list))))
+
+==================
+Fiasco upstream implement_default.cpp (012bbb30fa5c95788dd472b956a4620db566450d)
+==================
+
+IMPLEMENTATION:
+
+IMPLEMENT_DEFAULT void Test::func1()  { /* this is the default */ }
+IMPLEMENT_OVERRIDE void Test::func1() { /* this is the override */ }
+
+IMPLEMENT_OVERRIDE void Test::func2() { /* this is the override */ }
+IMPLEMENT_DEFAULT void Test::func2()  { /* this is the default */ }
+
+---
+
+(translation_unit
+  (fiasco_implementation_section)
+  (function_definition
+    (fiasco_implement_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (comment)))
+  (function_definition
+    (fiasco_implement_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (comment)))
+  (function_definition
+    (fiasco_implement_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (comment)))
+  (function_definition
+    (fiasco_implement_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement
+      (comment))))
+
+==================
+Fiasco upstream inline.cpp (012bbb30fa5c95788dd472b956a4620db566450d)
+==================
+
+inline NEEDS [Foo::private_func, Bar::private_func]
+void 
+Bar::another_private_func()
+{
+}
+
+PUBLIC inline NEEDS [Bar::another_private_func, Frob::private_func]
+void
+Bar::public_func()
+{
+}
+
+---
+
+(translation_unit
+  (function_definition
+    (storage_class_specifier)
+    (fiasco_needs
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier)))
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement))
+  (function_definition
+    (fiasco_visibility_specifier)
+    (storage_class_specifier)
+    (fiasco_needs
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier)))
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (compound_statement)))
+
+==================
+Fiasco upstream tag_enabled.cpp (012bbb30fa5c95788dd472b956a4620db566450d)
+==================
+
+bool T::function3(void)
+{
+  return TAG_ENABLED(tag_not_defined && tag_defined);
+}
+
+bool T::function4(void)
+{
+  return TAG_ENABLED(tag_not_defined || tag_defined);
+}
+
+---
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (return_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (binary_expression
+              (identifier)
+              (identifier)))))))
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (return_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (binary_expression
+              (identifier)
+              (identifier))))))))
+
+==================
+Fiasco upstream dropsection.cpp (012bbb30fa5c95788dd472b956a4620db566450d)
+==================
+
+IMPLEMENTATION [{!bax,!ixbix}]:
+
+PUBLIC int
+Gen_foo::tust( int y )
+{
+  // just return y
+  return y;
+}
+
+---
+
+(translation_unit
+  (fiasco_implementation_section
+    (fiasco_tag_expression
+      (fiasco_tag_expression
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (identifier)))
+        (fiasco_tag_expression
+          (fiasco_tag_expression
+            (identifier))))))
+  (function_definition
+    (fiasco_visibility_specifier)
+    (primitive_type)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (primitive_type)
+          (identifier))))
+    (compound_statement
+      (comment)
+      (return_statement
+        (identifier)))))
