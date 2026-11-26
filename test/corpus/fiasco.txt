@@ -515,3 +515,105 @@ KIP kip asm("my_kip") __attribute__((section(".kip"))) = { 1 };
                 (string_content))))))
       (initializer_list
         (number_literal)))))
+
+================================================================================
+'explicit' after other modifiers
+================================================================================
+
+PUBLIC inline explicit
+A::A(int n)
+{}
+
+[[nodiscard]] inline explicit A::A(int n) {}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (fiasco_visibility_specifier)
+    (storage_class_specifier)
+    (explicit_function_specifier)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (primitive_type)
+          (identifier))))
+    (compound_statement))
+  (function_definition
+    (attribute_declaration
+      (attribute
+        (identifier)))
+    (storage_class_specifier)
+    (explicit_function_specifier)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (primitive_type)
+          (identifier))))
+    (compound_statement)))
+
+================================================================================
+'explicit' before template heads
+================================================================================
+
+PUBLIC explicit
+template< unsigned N >
+A<N>::A(unsigned n)
+{}
+
+PUBLIC explicit inline template<typename T>
+A<T>::operator bool() const
+{ return true; }
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (template_declaration
+    (fiasco_visibility_specifier)
+    (explicit_function_specifier)
+    (template_parameter_list
+      (parameter_declaration
+        (sized_type_specifier)
+        (identifier)))
+    (function_definition
+      (function_declarator
+        (qualified_identifier
+          (template_type
+            (type_identifier)
+            (template_argument_list
+              (type_descriptor
+                (type_identifier))))
+          (identifier))
+        (parameter_list
+          (parameter_declaration
+            (sized_type_specifier)
+            (identifier))))
+      (compound_statement)))
+  (template_declaration
+    (fiasco_visibility_specifier)
+    (explicit_function_specifier)
+    (storage_class_specifier)
+    (template_parameter_list
+      (type_parameter_declaration
+        (type_identifier)))
+    (function_definition
+      (qualified_identifier
+        (template_type
+          (type_identifier)
+          (template_argument_list
+            (type_descriptor
+              (type_identifier))))
+        (operator_cast
+          (primitive_type)
+          (abstract_function_declarator
+            (parameter_list)
+            (type_qualifier))))
+      (compound_statement
+        (return_statement
+          (true))))))

@@ -4625,6 +4625,10 @@
           "named": true
         },
         {
+          "type": "explicit_function_specifier",
+          "named": true
+        },
+        {
           "type": "fiasco_implement_specifier",
           "named": true
         },
@@ -7339,6 +7343,10 @@
         },
         {
           "type": "declaration",
+          "named": true
+        },
+        {
+          "type": "explicit_function_specifier",
           "named": true
         },
         {

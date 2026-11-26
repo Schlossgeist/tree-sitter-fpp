@@ -12181,38 +12181,42 @@
       ]
     },
     "explicit_function_specifier": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "explicit"
-        },
-        {
-          "type": "PREC",
-          "value": 15,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "explicit"
-              },
-              {
-                "type": "STRING",
-                "value": "("
-              },
-              {
-                "type": "SYMBOL",
-                "name": "expression"
-              },
-              {
-                "type": "STRING",
-                "value": ")"
-              }
-            ]
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "explicit"
+          },
+          {
+            "type": "PREC",
+            "value": 15,
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "explicit"
+                },
+                {
+                  "type": "STRING",
+                  "value": "("
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "STRING",
+                  "value": ")"
+                }
+              ]
+            }
           }
-        }
-      ]
+        ]
+      }
     },
     "base_class_clause": {
       "type": "SEQ",
@@ -18735,8 +18739,17 @@
     "_fiasco_leading_specifiers": {
       "type": "REPEAT1",
       "content": {
-        "type": "SYMBOL",
-        "name": "_declaration_modifiers"
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_declaration_modifiers"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "explicit_function_specifier"
+          }
+        ]
       }
     },
     "fiasco_visibility_specifier": {
@@ -19069,6 +19082,11 @@
     ],
     [
       "_declaration_specifiers",
+      "linkage_specification",
+      "template_declaration",
+      "_constructor_specifiers"
+    ],
+    [
       "linkage_specification",
       "template_declaration",
       "_constructor_specifiers"

@@ -29,6 +29,7 @@ module.exports = grammar(CPP, {
   conflicts: ($, original) => original.concat([
     [$.sized_type_specifier, $.call_expression],
     [$._declaration_specifiers, $.linkage_specification, $.template_declaration, $._constructor_specifiers],
+    [$.linkage_specification, $.template_declaration, $._constructor_specifiers],
     [$._string, $.concatenated_string],
   ]),
 
@@ -80,9 +81,14 @@ module.exports = grammar(CPP, {
     // Preprocess accepts specifiers before a template head in any order, e.g.
     // `PUBLIC inline template<...>`, `inline template<...>` or
     // `IMPLEMENT static inline template<...>`, and before a linkage
-    // specification.  Hidden: they are children of the template declaration
-    // or linkage specification, like the specifiers of a function.
-    _fiasco_leading_specifiers: $ => repeat1($._declaration_modifiers),
+    // specification, also 'explicit' (a constructor specifier, no
+    // declaration modifier): `PUBLIC explicit template<...>`.  Hidden: they
+    // are children of the template declaration or linkage specification,
+    // like the specifiers of a function.
+    _fiasco_leading_specifiers: $ => repeat1(choice(
+      $._declaration_modifiers,
+      $.explicit_function_specifier,
+    )),
 
     // The visibility of a member declared outside its class, e.g.
     // `PUBLIC int A::f()`.
@@ -115,6 +121,15 @@ module.exports = grammar(CPP, {
       $.fiasco_inline_specifier,
       $.fiasco_needs,
     ),
+
+    // After two modifiers, `inline constexpr explicit A::A(int) {}` is also
+    // a function with the return type 'explicit' (a keyword that is not
+    // valid there becomes an identifier).  Both parses end up in the same
+    // state, and without a dynamic precedence the declaration wins.  (Not
+    // on the whole constructor: `FOO(x) = 0;` in a block would become a
+    // pure virtual constructor.)  Remove once tree-sitter-cpp has it (not
+    // reported upstream yet).
+    explicit_function_specifier: ($, original) => prec.dynamic(1, original),
 
     // Copied from tree-sitter-cpp: allow an enum base on anonymous enums.
     enum_specifier: $ => prec.right(seq(
