@@ -19,6 +19,29 @@ const fiascoSection = ($, keyword) => seq(
   ':',
 );
 
+// Replaces each string token `value` in `rule` by `replacement`.
+const replaceToken = (rule, value, replacement) => {
+  if (rule.type === 'STRING' && rule.value === value) {
+    return replacement;
+  }
+  const copy = {...rule};
+  if (rule.members) {
+    copy.members = rule.members.map((m) => replaceToken(m, value, replacement));
+  }
+  if (rule.content) {
+    copy.content = replaceToken(rule.content, value, replacement);
+  }
+  return copy;
+};
+
+// '>=' is one token, also where a '>' may close a template argument list:
+// `enable_if_t<N >= 3>`, `b < c && e >= d`.  tree-sitter-cpp gives that '>'
+// a lexical precedence of 1 (so that '>>' closes two lists), which beats
+// '>='.  This replaces '>=' in `rule` by a token with an even higher one.
+// Remove once tree-sitter-cpp has it (tree-sitter/tree-sitter-cpp#311).
+const withGreaterEqual = (rule) =>
+  replaceToken(rule, '>=', alias(token(prec(2, '>=')), '>='));
+
 // Copied from tree-sitter-c: the pointer declarators, with attributes after
 // the '*': `int * [[maybe_unused]] p`, and GNU attributes among the
 // qualifiers, `Foo * __attribute__((nonnull)) f()`.  Remove once
@@ -199,6 +222,12 @@ module.exports = grammar(CPP, {
         field('value', choice($.initializer_list, $.expression)),
       ),
     ),
+
+    // '>=' as one token (see withGreaterEqual()), also in folds: wherever
+    // the binary '>=' is valid, a plain '>=' would lose against it.
+    binary_expression: (_, original) => withGreaterEqual(original),
+    _fold_operator: (_, original) => withGreaterEqual(original),
+    _binary_fold_operator: (_, original) => withGreaterEqual(original),
 
     // A function with a return type may be '= default' or '= delete'
     // outside a class body as well: `void f(double) = delete;`, a friend

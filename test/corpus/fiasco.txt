@@ -754,3 +754,72 @@ void g(int * __attribute__((noderef)));
             (attribute_specifier
               (argument_list
                 (identifier)))))))))
+
+================================================================================
+'>=' in template arguments
+================================================================================
+
+PUBLIC template<int N>
+cxx::enable_if_t<N >= 3>
+A::f()
+{}
+
+X<B && N >= 3> x;
+
+bool g()
+{
+  return (b < c && e >= d) && (t >= ...);
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (template_declaration
+    (fiasco_visibility_specifier)
+    (template_parameter_list
+      (parameter_declaration
+        (primitive_type)
+        (identifier)))
+    (function_definition
+      (qualified_identifier
+        (namespace_identifier)
+        (template_type
+          (type_identifier)
+          (template_argument_list
+            (binary_expression
+              (identifier)
+              (number_literal)))))
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list))
+      (compound_statement)))
+  (declaration
+    (template_type
+      (type_identifier)
+      (template_argument_list
+        (binary_expression
+          (identifier)
+          (binary_expression
+            (identifier)
+            (number_literal)))))
+    (identifier))
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list))
+    (compound_statement
+      (return_statement
+        (binary_expression
+          (parenthesized_expression
+            (binary_expression
+              (binary_expression
+                (identifier)
+                (identifier))
+              (binary_expression
+                (identifier)
+                (identifier))))
+          (fold_expression
+            (identifier)))))))
