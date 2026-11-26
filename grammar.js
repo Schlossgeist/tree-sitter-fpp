@@ -191,6 +191,11 @@ module.exports = grammar(CPP, {
       )),
     }),
 
+    // `Foo::Foo() = default;` outside a class is also an assignment
+    // expression to an identifier 'default'.  Prefer the clause.  Remove
+    // once tree-sitter-cpp has it (tree-sitter/tree-sitter-cpp#357).
+    default_method_clause: _ => prec.dynamic(1, seq('=', 'default', ';')),
+
     // Functional cast with a single-keyword type, e.g. `unsigned (x)`.
     call_expression: ($, original) => choice(
       original,

@@ -668,3 +668,29 @@ A::operator = (A const &) = default;
             (type_qualifier)
             (abstract_reference_declarator)))))
     (default_method_clause)))
+
+================================================================================
+Out-of-class '= default' constructors and destructors
+================================================================================
+
+Foo::Foo() = default;
+Foo::~Foo() = default;
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list))
+    (default_method_clause))
+  (function_definition
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (destructor_name
+          (identifier)))
+      (parameter_list))
+    (default_method_clause)))
