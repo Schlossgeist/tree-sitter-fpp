@@ -694,3 +694,63 @@ Foo::~Foo() = default;
           (identifier)))
       (parameter_list))
     (default_method_clause)))
+
+================================================================================
+Attributes after '*'
+================================================================================
+
+PUBLIC inline
+Foo * __attribute__((nonnull))
+A::f()
+{}
+
+int * const __attribute__((aligned(8))) p;
+int * [[maybe_unused]] q;
+void g(int * __attribute__((noderef)));
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (fiasco_visibility_specifier)
+    (storage_class_specifier)
+    (type_identifier)
+    (pointer_declarator
+      (attribute_specifier
+        (argument_list
+          (identifier)))
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list)))
+    (compound_statement))
+  (declaration
+    (primitive_type)
+    (pointer_declarator
+      (type_qualifier)
+      (attribute_specifier
+        (argument_list
+          (call_expression
+            (identifier)
+            (argument_list
+              (number_literal)))))
+      (identifier)))
+  (declaration
+    (primitive_type)
+    (pointer_declarator
+      (attribute_declaration
+        (attribute
+          (identifier)))
+      (identifier)))
+  (declaration
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type)
+          (abstract_pointer_declarator
+            (attribute_specifier
+              (argument_list
+                (identifier)))))))))

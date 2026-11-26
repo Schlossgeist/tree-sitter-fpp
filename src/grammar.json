@@ -4255,14 +4255,30 @@
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "ms_pointer_modifier"
+                "name": "attribute_declaration"
               }
             },
             {
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_qualifier"
+                "name": "ms_pointer_modifier"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_qualifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_specifier"
+                  }
+                ]
               }
             },
             {
@@ -4306,14 +4322,30 @@
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "ms_pointer_modifier"
+                "name": "attribute_declaration"
               }
             },
             {
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_qualifier"
+                "name": "ms_pointer_modifier"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_qualifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_specifier"
+                  }
+                ]
               }
             },
             {
@@ -4357,14 +4389,30 @@
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "ms_pointer_modifier"
+                "name": "attribute_declaration"
               }
             },
             {
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_qualifier"
+                "name": "ms_pointer_modifier"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_qualifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_specifier"
+                  }
+                ]
               }
             },
             {
@@ -4396,14 +4444,30 @@
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "ms_pointer_modifier"
+                "name": "attribute_declaration"
               }
             },
             {
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_qualifier"
+                "name": "ms_pointer_modifier"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_qualifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_specifier"
+                  }
+                ]
               }
             },
             {

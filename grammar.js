@@ -19,6 +19,19 @@ const fiascoSection = ($, keyword) => seq(
   ':',
 );
 
+// Copied from tree-sitter-c: the pointer declarators, with attributes after
+// the '*': `int * [[maybe_unused]] p`, and GNU attributes among the
+// qualifiers, `Foo * __attribute__((nonnull)) f()`.  Remove once
+// tree-sitter-c has them (tree-sitter/tree-sitter-c#301, #331).
+const pointerDeclarator = ($, declarator) => prec.dynamic(1, prec.right(seq(
+  optional($.ms_based_modifier),
+  '*',
+  repeat($.attribute_declaration),
+  repeat($.ms_pointer_modifier),
+  repeat(choice($.type_qualifier, $.attribute_specifier)),
+  field('declarator', declarator),
+)));
+
 module.exports = grammar(CPP, {
   name: 'fpp',
 
@@ -155,6 +168,17 @@ module.exports = grammar(CPP, {
       optional($._fiasco_leading_specifiers),
       original,
     ),
+
+    pointer_declarator: $ => pointerDeclarator($, $._declarator),
+    pointer_field_declarator: $ => pointerDeclarator($, $._field_declarator),
+    pointer_type_declarator: $ => pointerDeclarator($, $._type_declarator),
+    abstract_pointer_declarator: $ => prec.dynamic(1, prec.right(seq(
+      '*',
+      repeat($.attribute_declaration),
+      repeat($.ms_pointer_modifier),
+      repeat(choice($.type_qualifier, $.attribute_specifier)),
+      field('declarator', optional($._abstract_declarator)),
+    ))),
 
     // Copied from tree-sitter-cpp: any abstract declarator.
     optional_parameter_declaration: $ => seq(
