@@ -176,6 +176,21 @@ module.exports = grammar(CPP, {
       ),
     ),
 
+    // A function with a return type may be '= default' or '= delete'
+    // outside a class body as well: `void f(double) = delete;`, a friend
+    // `friend bool operator==(X, X) = default;`, or FPP's out-of-class
+    // member declarations (`PUBLIC X & A::f() && = delete;`).
+    // tree-sitter-cpp takes the clause for an initializer.  Remove once
+    // tree-sitter-cpp has it (tree-sitter/tree-sitter-cpp#351, #375).
+    function_definition: ($, original) => ({
+      ...original,
+      members: original.members.map((e) => e.name !== 'body' ? e : choice(
+        e,
+        $.default_method_clause,
+        $.delete_method_clause,
+      )),
+    }),
+
     // Functional cast with a single-keyword type, e.g. `unsigned (x)`.
     call_expression: ($, original) => choice(
       original,

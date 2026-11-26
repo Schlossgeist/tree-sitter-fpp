@@ -617,3 +617,54 @@ A<T>::operator bool() const
       (compound_statement
         (return_statement
           (true))))))
+
+================================================================================
+'= default' and '= delete' after a return type
+================================================================================
+
+void f(double) = delete;
+
+PUBLIC
+X &
+A::f() && = delete;
+
+PUBLIC
+A &
+A::operator = (A const &) = default;
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (delete_method_clause))
+  (function_definition
+    (fiasco_visibility_specifier)
+    (type_identifier)
+    (reference_declarator
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list)
+        (ref_qualifier)))
+    (delete_method_clause))
+  (function_definition
+    (fiasco_visibility_specifier)
+    (type_identifier)
+    (reference_declarator
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (operator_name))
+        (parameter_list
+          (parameter_declaration
+            (type_identifier)
+            (type_qualifier)
+            (abstract_reference_declarator)))))
+    (default_method_clause)))
