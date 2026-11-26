@@ -1,12 +1,14 @@
 """FPP grammar for tree-sitter"""
 
-from importlib.resources import files as _files
-
 from ._binding import language
 
 
 def _get_query(name, file):
-    query = _files(f"{__package__}.queries") / file
+    # Imported here and not at the top: importlib.resources takes several
+    # milliseconds to import, and only the queries need it.
+    import importlib.resources
+
+    query = importlib.resources.files(f"{__package__}.queries") / file
     globals()[name] = query.read_text()
     return globals()[name]
 
